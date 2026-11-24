@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>快速翻译 · 本地预览壳</title>
+<!--
+  本地预览壳：不需要 DSH，用真 React 加载 ../client.js，假接口模拟模型列表和 SSE 流。
+  用法：在插件目录下起一个静态服务器（python3 -m http.server 8765），打开
+        http://localhost:8765/dev/harness.html
+  参数：?demo=1（自动翻一段示例）  ?open=history
+        ?theme=dark  ?w=420（面板宽度）  ?h=750（面板高度，截 README 图用）  ?seed=27（预置 N 条历史）  ?empty=1（清空草稿）
+        ?skin=field|paper（界面风格）  ?models=0（模拟 DSH 里没有模型）  ?slow=1（流式放慢，方便看"翻译中"）  ?fail=1（模拟出错）
+-->
+<style>
+:root{--dsh-content-font-size:14px;--dsw-alias-bg-base:#ffffff;--dsw-alias-bg-layer-1:#f7f7f8;--dsw-alias-bg-layer-2:#eeeef1;--dsw-alias-bg-overlay:#fff;
+  --dsw-alias-border-l1:#ebebee;--dsw-alias-border-l2:#dadade;--dsw-alias-brand-primary:#4d6bfe;--dsw-alias-label-primary:#1d1d22;--dsw-alias-label-secondary:#6c6c75;
+  --dsw-alias-state-success-primary:#16935a;--dsw-alias-state-warn-primary:#b97a12;--dsw-alias-state-error-primary:#d14343;--dsw-alias-state-idle-primary:#a7a7ae}
+html[data-theme="dark"]{--dsw-alias-bg-base:#17171a;--dsw-alias-bg-layer-1:#1f1f23;--dsw-alias-bg-layer-2:#29292e;--dsw-alias-bg-overlay:#25252a;--dsw-alias-border-l1:#2b2b30;--dsw-alias-border-l2:#3a3a41;
+  --dsw-alias-brand-primary:#6d86ff;--dsw-alias-label-primary:#ececef;--dsw-alias-label-secondary:#9a9aa4;--dsw-alias-state-warn-primary:#e0a53d}
+html,body{margin:0;height:100%;background:#777}
+#app{height:100vh;margin:0 auto}
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const qs = new URLSearchParams(location.search)
+if (qs.get('theme') === 'dark') document.documentElement.dataset.theme = 'dark'
+if (qs.get('w')) document.getElementById('app').style.width = qs.get('w') + 'px'
+if (qs.get('h')) document.getElementById('app').style.height = qs.get('h') + 'px'
+if (qs.get('empty')) { localStorage.removeItem('dsh-quick-translate:draft') }
+if (qs.get('skin')) { const p = JSON.parse(localStorage.getItem('dsh-quick-translate:prefs') || '{}'); p.skin = qs.get('skin'); if (qs.get('open') !== 'history') p.historyOpen = false; localStorage.setItem('dsh-quick-translate:prefs', JSON.stringify(p)) }
+if (qs.get('seed') !== null) {
+  const n = Number(qs.get('seed')) || 0
+  const zh = ['最好的译文，往往不是最贴字面的那一版。它把原文的节奏，带进一门本没有为它预留位置的语言。', '请在周五之前确认最终的报价单，我们需要预留出生产排期。', '本季度的退货率下降了三个百分点，主要来自尺码表的改版。', '把复杂的事讲简单，比把简单的事讲复杂难得多。']
+  const en = ['Shipping is a feature. Ship small, ship often, and let the work speak.', 'Context is the cheapest thing to give and the most expensive to lose.', 'Please keep the tone warm but brief; this goes to first-time buyers.']
+  const models = ['DeepSeek Chat', 'GLM-5.3', 'Claude Sonnet 5.5', 'GLM-5.3 Flash']
+  const list = []
+  for (let i = 0; i < n; i++) {
+    const toZh = i % 3 !== 1
+    const a = zh[i % zh.length], b = en[i % en.length]
+    list.push({ id: 'seed-' + i, source: toZh ? b : a, result: toZh ? a : b, target: toZh ? 'zh' : 'en', provider: 'p', model: 'm', modelName: models[i % 4], at: Date.now() - i * 5.5 * 3600e3, elapsedMs: 1800 + i * 37, truncated: false })
+  }
+  localStorage.setItem('dsh-quick-translate:history', JSON.stringify(list))
+}
+const RESULT = '最好的译文，往往不是最贴字面的那一版。它把原文的节奏，带进一门本没有为它预留位置的语言。\n\n好的译者会读两遍：一遍以陌生人的身份，一遍以作者的身份。'
+const RESULT_EN = 'The best translations are not the most literal ones. They carry the rhythm of the original into a language that never asked for it.'
+const realFetch = window.fetch
+window.fetch = async (url, opts) => {
+  const s = String(url)
+  if (s.includes('/quick-translate/api/models')) {
+    await new Promise((r) => setTimeout(r, 200))
+    if (qs.get('models') === '0') return new Response(JSON.stringify({ ok: true, models: [], skipped: [], default: null }), { headers: { 'content-type': 'application/json' } })
+    const models = [
+      { provider: 'deepseek', providerName: 'DeepSeek 官方', model: 'deepseek-chat', name: 'DeepSeek Chat' },
+      { provider: 'deepseek', providerName: 'DeepSeek 官方', model: 'deepseek-reasoner', name: 'DeepSeek Reasoner' },
+      { provider: 'zhipu', providerName: '智谱', model: 'glm-5.3', name: 'GLM-5.3' },
+      { provider: 'zhipu', providerName: '智谱', model: 'glm-5.3-flash', name: 'GLM-5.3 Flash' },
+      { provider: 'anthropic', providerName: 'Anthropic', model: 'claude-sonnet-5-5', name: 'Claude Sonnet 5.5' },
+    ]
+    return new Response(JSON.stringify({ ok: true, models, skipped: [], default: { provider: 'deepseek', model: 'deepseek-chat' } }), { headers: { 'content-type': 'application/json' } })
+  }
+  if (s.includes('/quick-translate/api/translate')) {
+    const body = JSON.parse(opts.body)
+    const full = body.target === 'zh' ? RESULT : RESULT_EN
+    const step = qs.get('slow') ? 220 : 30
+    const enc = new TextEncoder()
+    const signal = opts.signal
+    const stream = new ReadableStream({
+      async start(ctrl) {
+        const send = (e) => ctrl.enqueue(enc.encode('data: ' + JSON.stringify(e) + '\n\n'))
+        send({ type: 'meta', provider: body.provider, model: body.model })
+        if (qs.get('fail')) { await new Promise((r) => setTimeout(r, 400)); send({ type: 'error', message: '服务商返回 429：请求过于频繁，请稍后再试' }); ctrl.close(); return }
+        for (let i = 0; i < full.length; i += 3) {
+          if (signal && signal.aborted) { ctrl.error(new DOMException('aborted', 'AbortError')); return }
+          await new Promise((r) => setTimeout(r, step))
+          send({ type: 'delta', text: full.slice(i, i + 3) })
+        }
+        send({ type: 'done', text: full, elapsedMs: 2300, truncated: false, provider: body.provider, model: body.model })
+        ctrl.close()
+      },
+    })
+    return new Response(stream, { headers: { 'content-type': 'text/event-stream' } })
+  }
+  return realFetch(url, opts)
+}
+let Panel = null
+window.__ModuleLoader__ = {
+  load(m) {
+    const mod = m.factory((name) => { if (name === 'react') return React; throw new Error('only react') })
+    mod.apply({
+      inject(deps, cb) { if (deps.includes('locale')) cb({ locale: { getSnapshot: () => ({ active: qs.get('lang') || 'zh' }) }, on() {} }) },
+      slots: { inject: (_k, fn) => fn(), register: (o, c) => { if (o.name === 'main') Panel = c; return () => {} } },
+    })
+  },
+}
+</script>
+<script src="../client.js"></script>
+<script>
+ReactDOM.createRoot(document.getElementById('app')).render(React.createElement(Panel))
+// ?demo=1：填一段示例原文并自动翻译；?open=history：完成后打开历史小票（用来生成 README 截图）
+if (qs.get('demo')) {
+  setTimeout(() => {
+    const ta = document.querySelector('.qt-src, .qt-fsrc .qt-fta')
+    const set = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set
+    set.call(ta, 'The best translations are not the most literal ones. They carry the rhythm of the original into a language that never asked for it.\n\nA good translator reads twice: once as a stranger, and once as the author.')
+    ta.dispatchEvent(new Event('input', { bubbles: true }))
+    setTimeout(() => {
+      document.querySelectorAll('.qt-seg button, .qt-fsrc .qt-ftrack button')[0].click()
+      setTimeout(() => document.querySelector('.qt-btn-primary, .qt-fgo-primary').click(), 100)
+      setTimeout(() => { if (qs.get('open') === 'history') [...document.querySelectorAll('.qt-hbtn, .qt-fhb')].find((b) => /历史|History/.test(b.textContent)).click() }, 2600)
+    }, 300)
+  }, 600)
+}
+</script>
+</body>
+</html>

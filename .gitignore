@@ -1,0 +1,7 @@
+.DS_Store
+node_modules/
+*.tgz
+dev/archive/
+
+# 内部开发文档，只留本地
+AGENTS.md

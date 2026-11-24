@@ -1,0 +1,54 @@
+{
+  "name": "dsh-quick-translate",
+  "version": "0.3.1",
+  "description": "快速翻译 · DeepSeek Harness 插件：英译中 / 中译英，直接选用 DSH 里已配置的模型，流式输出；两套界面风格（纸本拼贴 / 色场简洁）可在头部切换，可把译文做成分享卡片。",
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "dsh",
+    "translate",
+    "translation",
+    "chinese",
+    "english"
+  ],
+  "author": "Erek",
+  "license": "MIT",
+  "homepage": "https://github.com/erek303/dsh-quick-translate#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erek303/dsh-quick-translate.git"
+  },
+  "bugs": {
+    "url": "https://github.com/erek303/dsh-quick-translate/issues"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ]
+    }
+  }
+}
