@@ -31,6 +31,9 @@ const qs = new URLSearchParams(location.search)
 if (qs.get('theme') === 'dark') document.documentElement.dataset.theme = 'dark'
 if (qs.get('w')) document.getElementById('app').style.width = qs.get('w') + 'px'
 if (qs.get('h')) document.getElementById('app').style.height = qs.get('h') + 'px'
+// ?skin=field&tone=dark：强制色场风格的明暗；?fd=304298：覆盖深色下的色场蓝（做对比用）
+if (qs.get('tone')) { try { const p = JSON.parse(localStorage.getItem('dsh-quick-translate:prefs') || '{}'); p.toneMode = qs.get('tone'); localStorage.setItem('dsh-quick-translate:prefs', JSON.stringify(p)) } catch {} }
+if (qs.get('fd')) { const st = document.createElement('style'); st.textContent = `.qt-root.qt-skin-field[data-tone="dark"]{--qt-f-field:#${qs.get('fd').replace(/[^0-9a-f]/gi, '')} !important}`; document.head.appendChild(st) }
 if (qs.get('empty')) { localStorage.removeItem('dsh-quick-translate:draft') }
 if (qs.get('skin')) { const p = JSON.parse(localStorage.getItem('dsh-quick-translate:prefs') || '{}'); p.skin = qs.get('skin'); if (qs.get('open') !== 'history') p.historyOpen = false; localStorage.setItem('dsh-quick-translate:prefs', JSON.stringify(p)) }
 if (qs.get('seed') !== null) {

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>色场 · 深色下的蓝色对比</title>
+<style>
+body{margin:0;background:#0e0e10;color:#e6e6ea;font:14px -apple-system,"PingFang SC",sans-serif;padding:24px}
+h1{font-size:18px;margin:0 0 6px}
+p.note{margin:0 0 20px;color:#9a9ba4}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+figure{margin:0}
+figcaption{margin:0 0 8px;font-weight:600}
+figcaption span{font-weight:400;color:#9a9ba4;margin-left:8px;font-family:"SF Mono",Menlo,monospace;font-size:12px}
+.frame{position:relative;width:100%;aspect-ratio:1200/760;overflow:hidden;border-radius:10px;border:1px solid #2a2b31}
+iframe{position:absolute;left:0;top:0;width:1200px;height:760px;border:0;transform-origin:0 0}
+</style>
+</head>
+<body>
+<h1>色场 · 深色模式下右侧的蓝</h1>
+<p class="note">四张都是同一段翻译、同样的深色底，只有右侧色场的蓝不同。A 是现在的颜色，越往后越压暗、越沉。</p>
+<div class="grid">
+  <figure><figcaption>A · 现在<span>#425cd7</span></figcaption><div class="frame"><iframe data-fd="425cd7"></iframe></div></figure>
+  <figure><figcaption>B · 压暗一档<span>#384db4</span></figcaption><div class="frame"><iframe data-fd="384db4"></iframe></div></figure>
+  <figure><figcaption>C · 再压一档（推荐）<span>#304298</span></figcaption><div class="frame"><iframe data-fd="304298"></iframe></div></figure>
+  <figure><figcaption>D · 最沉，接近藏青<span>#2a3881</span></figcaption><div class="frame"><iframe data-fd="2a3881"></iframe></div></figure>
+</div>
+<script>
+const frames = [...document.querySelectorAll('iframe')]
+frames.forEach((f, i) => { setTimeout(() => { f.src = `harness.html?skin=field&tone=dark&demo=1&fd=${f.dataset.fd}` }, i * 400) })
+const fit = () => frames.forEach((f) => { const w = f.parentElement.clientWidth; f.style.transform = `scale(${w / 1200})` })
+addEventListener('resize', fit); fit()
+</script>
+</body>
+</html>

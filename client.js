@@ -543,7 +543,7 @@ window.__ModuleLoader__.load({
   background:var(--qt-f-base);color:var(--qt-f-ink);font-family:var(--qt-f-ui)}
 .qt-root.qt-skin-field[data-tone="dark"]{--qt-f-base:#16171b;--qt-f-l1:#1f2025;--qt-f-l2:#2a2b31;--qt-f-ov:#24252b;--qt-f-b1:#2c2d33;--qt-f-b2:#3a3b42;
   --qt-f-ink:#ececef;--qt-f-mute:#9a9ba4;--qt-f-idle:#5e5f68;--qt-f-err:#f06b6b;
-  --qt-f-field:color-mix(in srgb,var(--qt-f-brand) 84%,#0b0d18);--qt-f-on2:rgba(255,255,255,.84);--qt-f-on3:rgba(255,255,255,.14);--qt-f-wm:rgba(255,255,255,.07)}
+  --qt-f-field:#304298;--qt-f-on2:rgba(255,255,255,.84);--qt-f-on3:rgba(255,255,255,.14);--qt-f-wm:rgba(255,255,255,.07)}
 .qt-ftone{display:flex;gap:2px;padding:3px;border-radius:11px;background:var(--qt-f-l2);flex:none}
 .qt-ftone button{height:28px;padding:0 10px;border-radius:8px;font-size:12.5px;color:var(--qt-f-mute);white-space:nowrap;transition:background .15s,color .15s}
 .qt-ftone button:hover{color:var(--qt-f-ink)}
