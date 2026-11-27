@@ -623,6 +623,9 @@ window.__ModuleLoader__.load({
 .qt-ferror button,.qt-fcopy{height:40px;padding:0 18px;border-radius:12px;background:#fff;color:color-mix(in srgb,var(--qt-f-field) 82%,#000);font-size:13.5px;font-weight:600;white-space:nowrap;flex:none}
 .qt-ferror button{height:32px;padding:0 14px;border-radius:10px}
 .qt-fcopy.is-warn{color:var(--qt-f-err)}
+/* 深色下两个白底按钮压暗一点，和 #304298 的色场、#1f2025 的原文块亮度接近，不再跳出来 */
+.qt-root.qt-skin-field[data-tone="dark"] .qt-fgo{background:#c8c9d0;color:#16171b}
+.qt-root.qt-skin-field[data-tone="dark"] .qt-fcopy,.qt-root.qt-skin-field[data-tone="dark"] .qt-ferror button{background:#d3d7e6;color:#22306c}
 .qt-fcopy:disabled,.qt-flink:disabled{opacity:.4}
 .qt-flink{height:40px;padding:0 14px;border-radius:12px;font-size:13.5px;color:var(--qt-f-on);white-space:nowrap;flex:none}
 .qt-flink:hover:not(:disabled){background:var(--qt-f-on3)}
