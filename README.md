@@ -7,7 +7,7 @@
 界面提供两种风格，可在右上角随时切换：
 
 - **纸本**：原文写在方格本上，译文印在覆于其上的半透明纸上，带一点手账的质感。
-- **色场**：简洁版。原文在左，译文在右侧的整块色面上，配色跟随 DSH 的浅色 / 深色主题，适合只关注翻译本身的使用场景。
+- **色场**：简洁版。原文在左，译文在右侧的整块色面上，可以跟随 DSH 界面的明暗，也可以在右上角手动选浅色或深色，适合只关注翻译本身的使用场景。
 
 ### 纸本
 
@@ -21,7 +21,7 @@
 
 ![色场风格的翻译历史](https://raw.githubusercontent.com/erek303/dsh-quick-translate/main/docs/screenshots/field-history.jpg)
 
-![色场风格，DSH 深色主题](https://raw.githubusercontent.com/erek303/dsh-quick-translate/main/docs/screenshots/field-dark.jpg)
+![色场风格，深色](https://raw.githubusercontent.com/erek303/dsh-quick-translate/main/docs/screenshots/field-dark.jpg)
 
 ## 安装
 
@@ -87,6 +87,7 @@ DSH 不会自动更新第三方插件，有新版本时需要手动更新：
 6. 每次完成的翻译都会存入「历史」，支持搜索、回看和删除。
 7. 翻译过程中按 **Esc** 可随时中止。
 8. 「复制」将译文复制到剪贴板；「分享图片」将本次原文与译文生成一张竖版图片，可复制或保存为 PNG。
+9. 色场风格的右上角可选「跟随 / 浅色 / 深色」，默认跟随 DSH 界面的明暗。
 
 ## 说明
 
