@@ -22,6 +22,7 @@ window.__ModuleLoader__.load({
     const HISTORY_MAX_CHARS = 600_000
     const EMPTY_LIST = []
     const AUTHOR = 'Erek'
+    const FIELD_BLUE = '#4d6bfe'
     const COMP_W = 1200 // 画板 E 的桌面尺寸（去掉标题行）
     const COMP_H = 690
     const FIELD_W = 1200 // 画板 F 色场的工作区（1200×760 去掉 64px 头部）
@@ -533,7 +534,7 @@ window.__ModuleLoader__.load({
 /* ============ 色场（F）：画板 F 的 1200×696 工作区原样搭，再整体缩放（最多 1.3 倍）；颜色全部走 DSH 主题 token ============ */
 .qt-root.qt-skin-field{
   --qt-f-base:#ffffff;--qt-f-l1:#f5f6f8;--qt-f-l2:#ebecf0;--qt-f-ov:#ffffff;
-  --qt-f-b1:#e7e8ec;--qt-f-b2:#d6d7dd;--qt-f-brand:var(--dsw-alias-brand-primary,#4d6bfe);
+  --qt-f-b1:#e7e8ec;--qt-f-b2:#d6d7dd;--qt-f-brand:#4d6bfe;
   --qt-f-ink:#1d1d22;--qt-f-mute:#6c6c75;--qt-f-idle:#a7a7ae;
   --qt-f-err:#d14343;
   --qt-f-field:var(--qt-f-brand);--qt-f-on:#fff;--qt-f-on2:rgba(255,255,255,.86);--qt-f-on3:rgba(255,255,255,.16);--qt-f-wm:rgba(255,255,255,.08);
@@ -548,6 +549,7 @@ window.__ModuleLoader__.load({
 .qt-ftone button:hover{color:var(--qt-f-ink)}
 .qt-ftone button[aria-pressed="true"]{background:var(--qt-f-base);color:var(--qt-f-ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08),0 0 0 .5px rgba(0,0,0,.04)}
 .qt-skin-field :focus-visible{outline:2px solid var(--qt-f-brand);outline-offset:2px}
+/* 色场的蓝固定为 DeepSeek 蓝：作者实机里读 DSH 的 --dsw-alias-brand-primary 得到的是黑色，整块色场被画成了黑的 */
 .qt-ffield :focus-visible{outline-color:#fff}
 
 /* 头部 */
@@ -2240,12 +2242,8 @@ window.__ModuleLoader__.load({
       const compStyle = narrow ? undefined : { zoom: fit.scale }
       // 分享卡片的数据：两种风格共用，色场多带一个品牌色
       const openShare = () => {
-        let brand = ''
-        try {
-          brand = rootRef.current && typeof getComputedStyle === 'function' ? getComputedStyle(rootRef.current).getPropertyValue('--dsw-alias-brand-primary').trim() : ''
-        } catch {
-          brand = ''
-        }
+        // 分享卡片的蓝和界面一致，固定 DeepSeek 蓝（不读 DSH 的品牌色 token，作者实机里它是黑色）
+        const brand = FIELD_BLUE
         setShareData({
           source,
           result,
