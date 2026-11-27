@@ -163,7 +163,7 @@ check('CSS 只引用 --dsw-alias-* / --dsh-* 变量（没有其它硬编码 CSS 
 
 /* ----------------------------- 4. 交互 ----------------------------- */
 section('交互')
-const pressed = (t) => findAll(t, (n) => n.type === 'button' && n.props['aria-pressed'] === 'true').map(text).filter((s) => !['历史', '纸本', '色场'].includes(s))
+const pressed = (t) => findAll(t, (n) => n.type === 'button' && n.props['aria-pressed'] === 'true').map(text).filter((s) => !['历史', '纸本', '色场', '跟随', '浅色', '深色'].includes(s))
 const refreshBtn = (t) => findAll(t, (n) => n.type === 'button' && n.props.title === '刷新模型')[0]
 
 click(refreshBtn(tree)); await tick(); tree = render()
@@ -277,6 +277,20 @@ click(one(tree, 'qt-fhi-del')); tree = render()
 check('色场：删除 → 历史为空、显示空提示', findAll(tree, byClass('qt-fhi')).length === 0 && /还没有翻译记录/.test(text(one(tree, 'qt-fempty'))))
 click(findAll(tree, (n) => n.type === 'button' && n.props['aria-label'] === '收起历史')[0]); tree = render()
 check('色场：收起历史', findAll(tree, byClass('qt-fhist')).length === 0)
+
+// 明暗：默认跟随；手动切深色 / 浅色后根节点 data-tone 跟着变，并写进偏好
+check('色场明暗默认 = 跟随', btnText(tree, '跟随')?.props['aria-pressed'] === 'true')
+click(btnText(tree, '深色')); tree = render()
+check('点「深色」→ 色场变深色', rootOf(tree).props['data-tone'] === 'dark' && btnText(tree, '深色')?.props['aria-pressed'] === 'true')
+click(btnText(tree, '浅色')); tree = render()
+check('点「浅色」→ 色场变浅色', rootOf(tree).props['data-tone'] === 'light')
+check('明暗写进偏好（prefs.toneMode）', /writeJson\(PREFS_KEY, \{[^}]*\btoneMode\b[^}]*\}\)/.test(src))
+storage.set('dsh-quick-translate:prefs', JSON.stringify({ ...prefsNow(), skin: 'field', toneMode: 'dark' }))
+stateStore.clear(); tree = render()
+check('刷新后仍是深色', rootOf(tree).props['data-tone'] === 'dark')
+click(btnText(tree, '跟随')); tree = render()
+click(refreshBtn(tree)); await tick(); tree = render()
+srcTA(tree).props.onChange({ target: { value: 'Hello, world.' } }); tree = render()
 
 click(btnText(tree, '纸本')); tree = render()
 check('切回纸本 → 方格本、硫酸纸回来，内容不丢', !isField(tree) && findAll(tree, byClass('qt-note')).length === 1 && srcTA(tree).props.value === 'Hello, world.')

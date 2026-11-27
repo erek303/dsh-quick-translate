@@ -85,6 +85,11 @@ window.__ModuleLoader__.load({
         hoursAgo: (n) => `${n} 小时前`,
         yesterday: '昨天',
         defaultShort: '默认',
+        tone: '明暗',
+        toneAuto: '跟随',
+        toneAutoHint: '跟随 DSH 界面的明暗',
+        toneLight: '浅色',
+        toneDark: '深色',
         share: '分享图片',
         shareTitle: '分享卡片',
         shareMaking: '正在生成图片…',
@@ -176,6 +181,11 @@ window.__ModuleLoader__.load({
         hoursAgo: (n) => `${n} h ago`,
         yesterday: 'yesterday',
         defaultShort: 'default',
+        tone: 'Appearance',
+        toneAuto: 'Auto',
+        toneAutoHint: 'Follow the DSH appearance',
+        toneLight: 'Light',
+        toneDark: 'Dark',
         share: 'Share image',
         shareTitle: 'Share card',
         shareMaking: 'Rendering image…',
@@ -522,15 +532,21 @@ window.__ModuleLoader__.load({
 
 /* ============ 色场（F）：画板 F 的 1200×696 工作区原样搭，再整体缩放（最多 1.3 倍）；颜色全部走 DSH 主题 token ============ */
 .qt-root.qt-skin-field{
-  --qt-f-base:var(--dsw-alias-bg-base,#fff);--qt-f-l1:var(--dsw-alias-bg-layer-1,#f6f6f8);--qt-f-l2:var(--dsw-alias-bg-layer-2,#ececf0);--qt-f-ov:var(--dsw-alias-bg-overlay,#fff);
-  --qt-f-b1:var(--dsw-alias-border-l1,#e9e9ee);--qt-f-b2:var(--dsw-alias-border-l2,#d8d8de);--qt-f-brand:var(--dsw-alias-brand-primary,#4d6bfe);
-  --qt-f-ink:var(--dsw-alias-label-primary,#1d1d22);--qt-f-mute:var(--dsw-alias-label-secondary,#6c6c75);--qt-f-idle:var(--dsw-alias-state-idle-primary,#a7a7ae);
-  --qt-f-err:var(--dsw-alias-state-error-primary,#d14343);
+  --qt-f-base:#ffffff;--qt-f-l1:#f5f6f8;--qt-f-l2:#ebecf0;--qt-f-ov:#ffffff;
+  --qt-f-b1:#e7e8ec;--qt-f-b2:#d6d7dd;--qt-f-brand:var(--dsw-alias-brand-primary,#4d6bfe);
+  --qt-f-ink:#1d1d22;--qt-f-mute:#6c6c75;--qt-f-idle:#a7a7ae;
+  --qt-f-err:#d14343;
   --qt-f-field:var(--qt-f-brand);--qt-f-on:#fff;--qt-f-on2:rgba(255,255,255,.86);--qt-f-on3:rgba(255,255,255,.16);--qt-f-wm:rgba(255,255,255,.08);
   --qt-f-ui:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",var(--qt-zh-sans);
   --qt-f-mono:"SF Mono",Menlo,var(--qt-mono);
   background:var(--qt-f-base);color:var(--qt-f-ink);font-family:var(--qt-f-ui)}
-.qt-root.qt-skin-field[data-tone="dark"]{--qt-f-field:color-mix(in srgb,var(--qt-f-brand) 55%,var(--qt-f-base));--qt-f-on2:rgba(255,255,255,.8);--qt-f-on3:rgba(255,255,255,.12);--qt-f-wm:rgba(255,255,255,.06)}
+.qt-root.qt-skin-field[data-tone="dark"]{--qt-f-base:#16171b;--qt-f-l1:#1f2025;--qt-f-l2:#2a2b31;--qt-f-ov:#24252b;--qt-f-b1:#2c2d33;--qt-f-b2:#3a3b42;
+  --qt-f-ink:#ececef;--qt-f-mute:#9a9ba4;--qt-f-idle:#5e5f68;--qt-f-err:#f06b6b;
+  --qt-f-field:color-mix(in srgb,var(--qt-f-brand) 84%,#0b0d18);--qt-f-on2:rgba(255,255,255,.84);--qt-f-on3:rgba(255,255,255,.14);--qt-f-wm:rgba(255,255,255,.07)}
+.qt-ftone{display:flex;gap:2px;padding:3px;border-radius:11px;background:var(--qt-f-l2);flex:none}
+.qt-ftone button{height:28px;padding:0 10px;border-radius:8px;font-size:12.5px;color:var(--qt-f-mute);white-space:nowrap;transition:background .15s,color .15s}
+.qt-ftone button:hover{color:var(--qt-f-ink)}
+.qt-ftone button[aria-pressed="true"]{background:var(--qt-f-base);color:var(--qt-f-ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08),0 0 0 .5px rgba(0,0,0,.04)}
 .qt-skin-field :focus-visible{outline:2px solid var(--qt-f-brand);outline-offset:2px}
 .qt-ffield :focus-visible{outline-color:#fff}
 
@@ -691,7 +707,9 @@ window.__ModuleLoader__.load({
 .qt-share-bar .qt-fhb:hover{background:rgba(255,255,255,.12);color:#fff}
 
 /* 色场窄面板（< 760）：上下叠放、不缩放，尺寸照画板「F 色场 · 窄面板 440」 */
-.qt-fhead.is-narrow{height:calc(56px + var(--dsh-frame-top-clearance,0px));gap:6px;padding-right:12px;padding-left:calc(16px + var(--dsh-frame-leading-clearance,0px))}
+.qt-fhead.is-narrow{height:auto;min-height:calc(56px + var(--dsh-frame-top-clearance,0px));flex-wrap:wrap;row-gap:8px;gap:6px;padding-top:calc(10px + var(--dsh-frame-top-clearance,0px));padding-bottom:8px;padding-right:12px;padding-left:calc(16px + var(--dsh-frame-leading-clearance,0px))}
+.qt-fhead.is-narrow .qt-ftone{order:5}
+.qt-fhead.is-narrow .qt-ftone button{padding:0 9px}
 .qt-fhead.is-narrow .qt-ftitle{font-size:15px;margin-right:auto}
 .qt-fhead.is-narrow .qt-fsub{display:none}
 .qt-fhead.is-narrow .qt-ftrack button{padding:0 10px;gap:6px}
@@ -1513,6 +1531,20 @@ window.__ModuleLoader__.load({
       )
     }
 
+    // 自动明暗：从插件外面一层开始往上找第一个不透明的背景色（就是用户眼睛看到的 DSH 底色），
+    // 找不到再读 DSH 的 --dsw-alias-bg-base，都解析不了就看系统偏好
+    function detectDark(el) {
+      for (let n = el?.parentElement; n && n !== document.documentElement; n = n.parentElement) {
+        const bg = getComputedStyle(n).backgroundColor
+        const m = String(bg).match(/rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)(?:[\s,/]+([\d.]+%?))?/i)
+        if (!m) continue
+        const a = m[4] === undefined ? 1 : m[4].endsWith('%') ? parseFloat(m[4]) / 100 : parseFloat(m[4])
+        if (a < 0.5) continue
+        return isDarkColor(`rgb(${m[1]}, ${m[2]}, ${m[3]})`)
+      }
+      return isDarkColor(el ? getComputedStyle(el).getPropertyValue('--dsw-alias-bg-base') : '')
+    }
+
     // 解析主题 token 的颜色值（#rgb / #rrggbb / rgb()），算相对亮度判断明暗；解析不了就看系统偏好
     function isDarkColor(value) {
       const v = String(value || '').trim()
@@ -1852,7 +1884,10 @@ window.__ModuleLoader__.load({
       const [shareData, setShareData] = useState(null)
       // 界面风格：paper = E 纸本（默认），field = F 色场（简洁版）；记在偏好里
       const [skin, setSkin] = useState(prefs.skin === 'field' ? 'field' : 'paper')
-      const [tone, setTone] = useState('light')
+      const [autoTone, setTone] = useState('light')
+      // 色场明暗：auto 跟随 DSH 实际底色；light / dark 由用户在头部手动指定
+      const [toneMode, setToneMode] = useState(['auto', 'light', 'dark'].includes(prefs.toneMode) ? prefs.toneMode : 'auto')
+      const tone = toneMode === 'auto' ? autoTone : toneMode
       const rootRef = useRef(null)
       const boardRef = useRef(null)
       // 桌面按画板 E 的 1200×690 原样搭好，再整体缩放到面板大小；面板窄于 760 时改成上下叠放、不缩放
@@ -1881,7 +1916,7 @@ window.__ModuleLoader__.load({
         if (skin !== 'field') return undefined
         const el = rootRef.current
         if (!el || typeof getComputedStyle !== 'function') return undefined
-        const read = () => setTone(isDarkColor(getComputedStyle(el).getPropertyValue('--dsw-alias-bg-base')) ? 'dark' : 'light')
+        const read = () => setTone(detectDark(el) ? 'dark' : 'light')
         read()
         const mo = typeof MutationObserver === 'function' ? new MutationObserver(read) : null
         mo?.observe(document.documentElement, { attributes: true })
@@ -1919,7 +1954,7 @@ window.__ModuleLoader__.load({
         const id = setTimeout(() => writeJson(DRAFT_KEY, { source, result }), 400)
         return () => clearTimeout(id)
       }, [source, result])
-      useEffect(() => writeJson(PREFS_KEY, { modelKey: modelKeyState, direction, historyOpen, skin }), [modelKeyState, direction, historyOpen, skin])
+      useEffect(() => writeJson(PREFS_KEY, { modelKey: modelKeyState, direction, historyOpen, skin, toneMode }), [modelKeyState, direction, historyOpen, skin, toneMode])
       useEffect(() => writeJson(HISTORY_KEY, history), [history])
 
       // 「确认清空」3 秒后自动撤回
@@ -2354,6 +2389,13 @@ window.__ModuleLoader__.load({
               { className: 'qt-ftrack', role: 'group', 'aria-label': t.skin, style: noDrag },
               h('button', { type: 'button', 'aria-pressed': 'false', onClick: () => setSkin('paper') }, h('span', { className: 'qt-fsw qt-fsw-paper', 'aria-hidden': 'true' }), t.skinPaper),
               h('button', { type: 'button', 'aria-pressed': 'true', onClick: () => setSkin('field') }, h('span', { className: 'qt-fsw qt-fsw-field', 'aria-hidden': 'true' }), t.skinField),
+            ),
+            h(
+              'div',
+              { className: 'qt-ftone', role: 'group', 'aria-label': t.tone, style: noDrag },
+              ['auto', 'light', 'dark'].map((m) =>
+                h('button', { key: m, type: 'button', 'aria-pressed': toneMode === m ? 'true' : 'false', title: m === 'auto' ? t.toneAutoHint : '', onClick: () => setToneMode(m) }, m === 'auto' ? t.toneAuto : m === 'light' ? t.toneLight : t.toneDark),
+              ),
             ),
             fhb({ 'aria-pressed': historyOpen ? 'true' : 'false', onClick: () => setHistoryOpen((v) => !v) }, t.history, h('span', { className: 'qt-fcnt' }, `${history.length}`)),
             fhb({ title: modelsError || t.refresh, 'aria-label': t.refresh, disabled: modelsLoading, onClick: () => loadModels(true) }, h(RefreshIcon), modelsLoading ? t.refreshing : narrow ? t.refreshShort : t.refresh),
